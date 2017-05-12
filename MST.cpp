@@ -1,4 +1,3 @@
-//In this program I have used union and join algorithm
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -15,8 +14,8 @@ public:
     int n;
     vector<Edge> edges;
     vector<char> vertices;
-    vector<int> id; //for connected vertices 
-    vector<int> size;//For Join function and reduce time for algo
+    vector<int> id;
+    vector<int> size;
     Graph(int n){
         this->n=n;
         vertices.resize(n);
@@ -24,14 +23,14 @@ public:
         size.resize(n);
         for(int i=0;i<n;i++){
             id[i]=i;
-            size[i]=1;  //Initially all vertices's size is 1.
+            size[i]=1;
         }
     }
     
 };
 int root(char a,Graph gh);
-void Join(char a,char b,Graph gh);
-void Kruskal(Graph gh);
+void Join(char a,char b,Graph &gh);
+void Kruskal(Graph &gh);
 int main(){
     Graph gh(6);
     for(int i=0;i<6;i++){
@@ -56,19 +55,22 @@ int root(char a,Graph gh){
     }
     return i;
 }
-void Join(char a,char b,Graph gh){
+void Join(char a,char b,Graph &gh){
     int i=a;
     int j=b;
     i=i-97;
     j=j-97;
-    if(gh.size[i]>gh.size[j]){
-        gh.id[j]=i;
-        gh.size[i]+=gh.size[j];
+    int roota=root(a,gh);
+    int rootb=root(b,gh);
+    if(gh.size[roota]>gh.size[rootb]){
+        gh.id[rootb]=roota;
+        gh.size[roota]+=gh.size[rootb];
     }
     else{
-        gh.id[i]=j;
-        gh.size[j]+=gh.size[i];
+        gh.id[root(a,gh)]=j;
+        gh.size[rootb]+=gh.size[roota];
     }
+  
 }
 struct less_than_key
 {
@@ -77,17 +79,23 @@ struct less_than_key
         return (struct1.wieght < struct2.wieght);
     }
 };
-void Kruskal(Graph gh){
-    vector<Edge> A; //to collect spanning tree's edges
+void Kruskal(Graph &gh){
+    vector<Edge> A;
     std::sort(gh.edges.begin(),gh.edges.end(),less_than_key());
     vector<Edge>::iterator e;
     for(e=gh.edges.begin();e!=gh.edges.end();++e){
-        if(root(e->vertex1,gh)!=root(e->vertex2,gh)){  // If both connected or not
-            A.push_back(*e);
+        if(root(e->vertex1,gh)!=root(e->vertex2,gh)){
+            A.push_back(Edge(e->vertex1,e->vertex2,e->wieght));
             Join(e->vertex1,e->vertex2,gh);
         }
-        for(e=A.begin();e!=A.end();++e){
+        }
+        cout<<"All Graph edges and wieght : \n";
+        for(e=gh.edges.begin();e!=gh.edges.end();++e){
+        	cout<<e->vertex1<<" "<<e->vertex2<<"  "<<e->wieght<<"\n";
+        }
+        
+    cout<<"\n Spanning Tree Edges  \n";
+    for(e=A.begin();e!=A.end();++e){
             cout<<e->vertex1<<" "<<e->vertex2<<"  "<<e->wieght<<"\n";
         }
-    }
-}
+     }
