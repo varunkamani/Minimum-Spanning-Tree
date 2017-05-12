@@ -85,7 +85,7 @@ void Kruskal(Graph &gh){
     vector<Edge>::iterator e;
     for(e=gh.edges.begin();e!=gh.edges.end();++e){
         if(root(e->vertex1,gh)!=root(e->vertex2,gh)){
-            A.push_back(Edge(e->vertex1,e->vertex2,e->wieght));
+            A.push_back(*e);
             Join(e->vertex1,e->vertex2,gh);
         }
         }
